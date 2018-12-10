@@ -1,3 +1,1 @@
-this is a test version 1
-version 3
-
+Files for graphing 3D surfaces and solids/surfaces of revolution.
