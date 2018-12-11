@@ -61,11 +61,10 @@ var theta = 0;
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
 function drawCurve(){
-  console.log("drawingCurve");
   var c = new THREE.Curve()
   c.getPoint = function(t){
     var  s = (t-.5)*12*Math.PI;
-    return new THREE.Vector2(s,10*Math.sin(s));
+    return new THREE.Vector2(s,1*Math.cos(s));
   };
 
   var gg = new THREE.BufferGeometry().setFromPoints(c.getPoints(200));
@@ -108,19 +107,86 @@ function drawAxes(){
   var axesGroup = new THREE.Object3D;
 
   var axesgeometry = new THREE.Geometry();
-  // draw the axes
-  axesgeometry.vertices.push(new THREE.Vector3(-END-2,0,0));
-  axesgeometry.vertices.push(new THREE.Vector3(END+2,0,0));
-  axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
-  axesgeometry.vertices.push(new THREE.Vector3(0,END+2,0));
-  axesgeometry.vertices.push(new THREE.Vector3(0,-END-2,0));
-  axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
-  axesgeometry.vertices.push(new THREE.Vector3(0,0,END+2));
-  axesgeometry.vertices.push(new THREE.Vector3(0,0,-END-2));
+  var xaxisGeometry = new THREE.Geometry();
+  xaxisGeometry.vertices.push(new THREE.Vector3(-END-2,0,0));
+  xaxisGeometry.vertices.push(new THREE.Vector3( END+2,0,0));
 
-  var axesmaterial = new THREE.LineBasicMaterial( { color: 0x0FF0000, opacity: 0.5, linewidth:4} );
-  var axesline = new THREE.Line(axesgeometry, axesmaterial);
-  axesGroup.add(axesline);
+  var yaxisGeometry = new THREE.Geometry();
+  yaxisGeometry.vertices.push(new THREE.Vector3(0,-END-2,0));
+  yaxisGeometry.vertices.push(new THREE.Vector3(0, END+2,0));
+
+  var zaxisGeometry = new THREE.Geometry();
+  zaxisGeometry.vertices.push(new THREE.Vector3(0,0,-END-2));
+  zaxisGeometry.vertices.push(new THREE.Vector3(0,0, END+2));
+
+  var axesmaterial = new THREE.LineBasicMaterial( { color: 0x0FF0000, opacity: 1} );
+  var xaxisLine = new THREE.Line(xaxisGeometry,axesmaterial);
+  var yaxisLine = new THREE.Line(yaxisGeometry,axesmaterial);
+  var zaxisLine = new THREE.Line(zaxisGeometry,axesmaterial);
+
+  axesGroup.add(xaxisLine);
+  axesGroup.add(yaxisLine);
+  axesGroup.add(zaxisLine);
+
+
+  // add in tickmarks
+  var xticklength=Math.PI/2;
+  for (var i =0; i<END; i+=xticklength){
+    xtG = new THREE.Geometry();
+    xtG.vertices.push(new THREE.Vector3(i, .2,0));
+    xtG.vertices.push(new THREE.Vector3(i,-.2,0));
+    xtL = new THREE.Line(xtG, axesmaterial);
+    axesGroup.add(xtL);
+    xtG = new THREE.Geometry();
+    xtG.vertices.push(new THREE.Vector3(-i, .2,0));
+    xtG.vertices.push(new THREE.Vector3(-i,-.2,0));
+    xtL = new THREE.Line(xtG, axesmaterial);
+    axesGroup.add(xtL);
+  }
+
+
+  var yticklength=1;
+  for (var i =0; i<END; i+=yticklength){
+    ytG = new THREE.Geometry();
+    ytG.vertices.push(new THREE.Vector3( .2, i, 0));
+    ytG.vertices.push(new THREE.Vector3(-.2, i, 0));
+    ytL = new THREE.Line(ytG, axesmaterial);
+    axesGroup.add(ytL);
+    ytG = new THREE.Geometry();
+    ytG.vertices.push(new THREE.Vector3( .2,-i, 0));
+    ytG.vertices.push(new THREE.Vector3(-.2,-i, 0));
+    ytL = new THREE.Line(ytG, axesmaterial);
+    axesGroup.add(ytL);
+  }
+
+  var zticklength=1;
+  for (var i =0; i<END; i+=zticklength){
+    ztG = new THREE.Geometry();
+    ztG.vertices.push(new THREE.Vector3( .2, 0,i));
+    ztG.vertices.push(new THREE.Vector3(-.2, 0,i));
+    ztL = new THREE.Line(ztG, axesmaterial);
+    axesGroup.add(ztL);
+    ztG = new THREE.Geometry();
+    ztG.vertices.push(new THREE.Vector3( .2,0,-i));
+    ztG.vertices.push(new THREE.Vector3(-.2,0,-i));
+    ztL = new THREE.Line(ztG, axesmaterial);
+    axesGroup.add(ztL);
+  }
+
+
+  // // draw the axes
+  // axesgeometry.vertices.push(new THREE.Vector3(-END-2,0,0));
+  // axesgeometry.vertices.push(new THREE.Vector3(END+2,0,0));
+  // axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
+  // axesgeometry.vertices.push(new THREE.Vector3(0,END+2,0));
+  // axesgeometry.vertices.push(new THREE.Vector3(0,-END-2,0));
+  // axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
+  // axesgeometry.vertices.push(new THREE.Vector3(0,0,END+2));
+  // axesgeometry.vertices.push(new THREE.Vector3(0,0,-END-2));
+  //
+  // var axesmaterial = new THREE.LineBasicMaterial( { color: 0x0FF0000, opacity: 0.5, linewidth:4} );
+  // var axesline = new THREE.Line(axesgeometry, axesmaterial);
+  // axesGroup.add(axesline);
 
   // add in the tickmarks
 
