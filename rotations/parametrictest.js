@@ -109,16 +109,21 @@ function drawAxes(){
 
   var axesgeometry = new THREE.Geometry();
   // draw the axes
-  axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
+  axesgeometry.vertices.push(new THREE.Vector3(-END-2,0,0));
   axesgeometry.vertices.push(new THREE.Vector3(END+2,0,0));
   axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
   axesgeometry.vertices.push(new THREE.Vector3(0,END+2,0));
+  axesgeometry.vertices.push(new THREE.Vector3(0,-END-2,0));
   axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
   axesgeometry.vertices.push(new THREE.Vector3(0,0,END+2));
+  axesgeometry.vertices.push(new THREE.Vector3(0,0,-END-2));
 
   var axesmaterial = new THREE.LineBasicMaterial( { color: 0x0FF0000, opacity: 0.5, linewidth:4} );
   var axesline = new THREE.Line(axesgeometry, axesmaterial);
   axesGroup.add(axesline);
+
+  // add in the tickmarks
+
 
   // put balls at the ends of the axes
   var sg = new THREE.SphereGeometry(1);
