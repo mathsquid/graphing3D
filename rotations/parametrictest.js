@@ -2,9 +2,9 @@ var container, scene, camera, renderer, controls;
 
 init();
 drawAxes();
-// drawpt();
 drawCurve();
 var ff;
+
 function init(){
   scene = new THREE.Scene();
   var tt=0;
@@ -20,36 +20,17 @@ function init(){
   light = new THREE.PointLight(0xffffff, 1);  // A light shining from above the surface.
   light.position.set(0,20,0);
   scene.add(light);
-  camera.position.set(0, 2, 75);
+  camera.position.set(20, 10, 40);
   camera.lookAt(scene.position);
 
-  renderer = new THREE.WebGLRenderer({antialias:true});
-  renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-  renderer.setClearColor( 0xbbbbdd, 1 );
   container = document.getElementById('stage');
-  container.appendChild(renderer.domElement);
+  renderer = new THREE.WebGLRenderer({canvas: stage, antialias:true});
+  document.body.appendChild(renderer.domElement);
+  renderer.setSize(SCREEN_WIDTH*.8, SCREEN_HEIGHT*.8);
+  renderer.setClearColor( 0xbbbbdd, 1 );
+  controls = new THREE.TrackballControls( camera, container );
+  controls.rotateSpeed=5;
 
-  controls = new THREE.TrackballControls( camera );
-  controls.rotateSpeed=10;
-
-  var helix = new THREE.Curve();
-  helix.getPoint = function(t){
-    var s = (t-0.5)*Math.PI;
-    return new THREE.Vector2(Math.PI*2*Math.cos(s+tt), s);
-  }
-
-  var nmat = new THREE.MeshPhongMaterial({
-    transparent: true, color: 0x000055,
-    emissive:0x000f0f,
-    wireframe:true, side: THREE.DoubleSide,
-  });
-
-  var l = new THREE.LatheGeometry(helix.getPoints(25), 25, 0);
-  var h = new THREE.Mesh(l,nmat);
-  // scene.add(h);
-
-
-var theta = 0;
   animate();
   function animate(){
     requestAnimationFrame(animate);
@@ -60,6 +41,13 @@ var theta = 0;
 }
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
+
+function b1(){
+  drawpt();
+}
+function b2(){
+}
+
 
 function drawCurve(){
   var c = new THREE.Curve()
@@ -85,7 +73,7 @@ function drawCurve(){
 ff = function(x) {return Math.exp(x/4)*Math.cos(x/2);}
 
 
-  var numdisks=200;
+  var numdisks=100;
   var a=-2.5*Math.PI;
   var b=2.5*Math.PI;
   var thickness = (b-a)/numdisks;

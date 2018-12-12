@@ -1,15 +1,34 @@
 <html lang="en">
 <head>
   <title>Plot Sample</title>
+  <style>
+			body { margin: 0; }
+			canvas { width: 50%; height: 50% }
+		</style>
 </head>
 <body>
 <hr>
-<div id="stage"></div>
+<div><canvas id="stage" width="500" height="500"></canvas><br>
+</div>
 <hr>
 <script type="text/javascript" src="three.min.js"></script>
+<script language="Javascript" type="text/javascript" src="https://www.westga.edu/~cleach/graphing/math.min.js"></script>
 <script type="text/javascript" src="TrackballControls.js"></script>
 <script type="text/javascript" src="parametrictest.js"></script>
 
-Graping 2d and rotation.
+
+<br>
+<br>
+<br>
+<br>
+<br>
+Graphing 2d and rotation.
+f(x) = <input type="TEXT"  id="functionString" value = "sin(x)" size="20" onchange="reDraw()">
+
+<button onclick="b1()">button</button>
+<button onclick="b2()">button</button>
+
+
 
 </body>
+</html>

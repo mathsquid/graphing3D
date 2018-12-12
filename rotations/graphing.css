@@ -1,0 +1,23 @@
+body {
+  background: #f0f0ff;
+}
+ #stage {
+     margin: 0px;
+     padding: 0px;
+     background: #ffffff;
+     border: thin inset #000000;
+     width: 640px;
+     height: 360px;
+ }
+
+ .column {
+     float: left;
+     width: 350px;
+ }
+
+ /* Clear floats after the columns */
+ .row:after {
+     content: "";
+     display: table;
+     clear: both;
+ }
