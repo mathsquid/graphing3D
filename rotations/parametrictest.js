@@ -4,7 +4,7 @@ init();
 drawAxes();
 // drawpt();
 drawCurve();
-
+var ff;
 function init(){
   scene = new THREE.Scene();
   var tt=0;
@@ -60,18 +60,49 @@ var theta = 0;
 }
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
+
 function drawCurve(){
   var c = new THREE.Curve()
   c.getPoint = function(t){
     var  s = (t-.5)*12*Math.PI;
-    return new THREE.Vector2(s,1*Math.cos(s));
+    return new THREE.Vector2(s,Math.exp(s/4)*Math.cos(s/2));
   };
 
   var gg = new THREE.BufferGeometry().setFromPoints(c.getPoints(200));
   var cm = new THREE.LineBasicMaterial({color: 0x0077ff});
   var co = new THREE.Line(gg, cm);
   scene.add(co);
+
+  var diskmat = new THREE.MeshPhongMaterial({
+  // color: "white",
+  color: 0x00ff00,
+  color: 0xff7700,
+  // wireframe:true,
+  specular: 0x080808,
+  side: THREE.DoubleSide
+});
+
+ff = function(x) {return Math.exp(x/4)*Math.cos(x/2);}
+
+
+  var numdisks=200;
+  var a=-2.5*Math.PI;
+  var b=2.5*Math.PI;
+  var thickness = (b-a)/numdisks;
+  for (var i=a; i<b; i+=thickness){
+    var radius=Math.abs(ff(i));
+    if (radius<.01) radius=.01;
+      var dg = new THREE.CylinderGeometry(radius, radius,thickness,50);
+      var dm = new THREE.Mesh(dg,diskmat);
+      dm.rotateZ(Math.PI/2)
+      dm.position.x = i;
+      scene.add(dm);
+    }
+
+
+
 }
+
 
 
 
@@ -130,7 +161,7 @@ function drawAxes(){
 
 
   // add in tickmarks
-  var xticklength=Math.PI/2;
+  var xticklength=Math.PI/4;
   for (var i =0; i<END; i+=xticklength){
     xtG = new THREE.Geometry();
     xtG.vertices.push(new THREE.Vector3(i, .2,0));
