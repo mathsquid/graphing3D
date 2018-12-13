@@ -6,7 +6,7 @@
 			canvas { width: 50%; height: 50% }
 		</style>
 </head>
-<body>
+<body onload="drawAxes()">
 <hr>
 <div><canvas id="stage" width="500" height="500"></canvas><br>
 </div>
@@ -18,15 +18,48 @@
 
 
 <br>
-<br>
-<br>
-<br>
-<br>
-Graphing 2d and rotation.
-f(x) = <input type="TEXT"  id="functionString" value = "sin(x)" size="20" onchange="reDraw()">
+Graphing 2d and rotation.<br>
 
-<button onclick="b1()">button</button>
-<button onclick="b2()">button</button>
+f(x) = <input type="TEXT"  id="functionString" value = "exp(x/4)*sin(x/2)" size="20" onchange="drawCurve()">
+
+a = <input type="TEXT" id="avalue" value="-2.5pi"  size="10" onchange=drawDisks();>
+b = <input type="TEXT" id="bvalue" value="2.5pi"  size="10" onchange=drawDisks();>
+n = <input type="TEXT" id="nvalue" value="100"  size="10" onchange=drawDisks();>
+
+
+<button onclick="drawCurve()">DrawCurve</button>
+<button onclick="drawDisks()">Draw Disks</button>
+
+<h3> Window Settings </h3>
+  <table>
+      <tr>
+          <td></td>
+          <td>min</td>
+          <td>max</td>
+          <td>tick</td>
+      </tr>
+      <tr>
+          <td>x</td>
+          <td><input type="TEXT" id="x_min" value="-8" size="10"></td>
+          <td><input type="TEXT" id="x_max" value="8"  size="10"></td>
+          <td><input type="TEXT" id="x_tick" value="1"  size="10"></td>
+      </tr>
+      <tr>
+          <td>y</td>
+          <td><input type="TEXT" id="y_min" value="-4.5"  size="10"></td>
+          <td><input type="TEXT" id="y_max" value="4.5"  size="10"></td>
+          <td><input type="TEXT" id="y_tick" value="1"  size="10"></td>
+      </tr>
+      <tr>
+          <td>z</td>
+          <td><input type="TEXT" id="z_min" value="-4.5"  size="10"></td>
+          <td><input type="TEXT" id="z_max" value="4.5"  size="10"></td>
+          <td><input type="TEXT" id="z_tick" value="1"  size="10"></td>
+      </tr>
+  <tr><td></td><td>
+      <button onclick="drawAxes()">Update</button>
+  </td></tr>
+  </table>
 
 
 

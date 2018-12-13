@@ -1,8 +1,6 @@
 var container, scene, camera, renderer, controls;
 
 init();
-drawAxes();
-drawCurve();
 var ff;
 
 function init(){
@@ -31,6 +29,7 @@ function init(){
   controls = new THREE.TrackballControls( camera, container );
   controls.rotateSpeed=5;
 
+
   animate();
   function animate(){
     requestAnimationFrame(animate);
@@ -42,50 +41,64 @@ function init(){
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
 
-function b1(){
-  drawpt();
-}
-function b2(){
-}
 
 
 function drawCurve(){
+  parseAndCompile();
+  scene.remove(scene.getObjectByName("curve"));
+  scene.remove(scene.getObjectByName("diskset"));
   var c = new THREE.Curve()
   c.getPoint = function(t){
     var  s = (t-.5)*12*Math.PI;
-    return new THREE.Vector2(s,Math.exp(s/4)*Math.cos(s/2));
+    return new THREE.Vector2(s,f(s));//Math.exp(s/4)*Math.cos(s/2));
   };
 
   var gg = new THREE.BufferGeometry().setFromPoints(c.getPoints(200));
   var cm = new THREE.LineBasicMaterial({color: 0x0077ff});
   var co = new THREE.Line(gg, cm);
+  co.name="curve";
   scene.add(co);
+}
 
+function clearGraph(){
+  scene.remove(scene.getObjectByName("curve"));
+  scene.remove(scene.getObjectByName("diskset"));
+}
+
+
+function drawDisks(){
+  var a = math.parse(document.getElementById("avalue").value).compile().eval();
+  var b = math.parse(document.getElementById("bvalue").value).compile().eval();
+  var numdisks = math.parse(document.getElementById("nvalue").value).compile().eval();
+
+
+  scene.remove(scene.getObjectByName("diskset"));
+    parseAndCompile();
+  ff = f;
+//  ff = function(x) {return Math.exp(x/4)*Math.cos(x/2);}
   var diskmat = new THREE.MeshPhongMaterial({
   // color: "white",
   color: 0x00ff00,
   color: 0xff7700,
-  // wireframe:true,
   specular: 0x080808,
+  // transparent:true,
+  // opacity:.5,
   side: THREE.DoubleSide
 });
 
-ff = function(x) {return Math.exp(x/4)*Math.cos(x/2);}
-
-
-  var numdisks=100;
-  var a=-2.5*Math.PI;
-  var b=2.5*Math.PI;
+  var diskset = new THREE.Object3D;
+  diskset.name ="diskset";
   var thickness = (b-a)/numdisks;
-  for (var i=a; i<b; i+=thickness){
+  for (var i=a+thickness*.5; i<b; i+=thickness){
     var radius=Math.abs(ff(i));
     if (radius<.01) radius=.01;
-      var dg = new THREE.CylinderGeometry(radius, radius,thickness,50);
+      var dg = new THREE.CylinderGeometry(radius,radius,thickness,50);
       var dm = new THREE.Mesh(dg,diskmat);
       dm.rotateZ(Math.PI/2)
       dm.position.x = i;
-      scene.add(dm);
+      diskset.add(dm);
     }
+    scene.add(diskset);
 
 
 
@@ -121,9 +134,25 @@ function drawpt(){
       scene.add(surface);
 }
 
+
+function parseAndCompile(){
+  var ft = document.getElementById("functionString").value;
+  exp = math.parse(ft).compile();
+  deriv = math.derivative(ft, "x").compile();
+}
+
+function f(x) {
+  return exp.eval({"x":x});
+}
+
+
+
 function drawAxes(){
+  scene.remove(scene.getObjectByName("axesobject"));
+
   var BIGIN=-20, END=20, WIDTH=END-BIGIN;
   var axesGroup = new THREE.Object3D;
+  axesGroup.name="axesobject";
 
   var axesgeometry = new THREE.Geometry();
   var xaxisGeometry = new THREE.Geometry();
@@ -149,7 +178,7 @@ function drawAxes(){
 
 
   // add in tickmarks
-  var xticklength=Math.PI/4;
+  var xticklength = math.parse(document.getElementById("x_tick").value).compile().eval();
   for (var i =0; i<END; i+=xticklength){
     xtG = new THREE.Geometry();
     xtG.vertices.push(new THREE.Vector3(i, .2,0));
@@ -164,7 +193,7 @@ function drawAxes(){
   }
 
 
-  var yticklength=1;
+  var yticklength = math.parse(document.getElementById("y_tick").value).compile().eval();
   for (var i =0; i<END; i+=yticklength){
     ytG = new THREE.Geometry();
     ytG.vertices.push(new THREE.Vector3( .2, i, 0));
@@ -178,7 +207,7 @@ function drawAxes(){
     axesGroup.add(ytL);
   }
 
-  var zticklength=1;
+  var zticklength = math.parse(document.getElementById("z_tick").value).compile().eval();
   for (var i =0; i<END; i+=zticklength){
     ztG = new THREE.Geometry();
     ztG.vertices.push(new THREE.Vector3( .2, 0,i));
