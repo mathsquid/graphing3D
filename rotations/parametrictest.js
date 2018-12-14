@@ -85,12 +85,10 @@ function drawCurve(fORg){
 
 }
 
-function clearGraph(){
-  scene.remove(scene.getObjectByName("curve"));
-  scene.remove(scene.getObjectByName("diskset"));
+
+function hideDisks(){
+    scene.remove(scene.getObjectByName("diskset"));  
 }
-
-
 function drawDisks(){
   var a = math.parse(document.getElementById("avalue").value).compile().eval();
   var b = math.parse(document.getElementById("bvalue").value).compile().eval();
@@ -128,21 +126,6 @@ function drawDisks(){
 
 }
 
-
-
-
-
-function surfaceFunction( u, v, target ) {
-    var x,y,z;  // A point on the surface, calculated from u,v.
-                // u  and v range from 0 to 1.
-                // x = 50 * (u - 0.5);  // x and z range from -10 to 10
-                // z = 50 * (v - 0.5);
-                // y = 2*(Math.sin(x/2) * Math.cos(z));
-                x = 10*Math.PI*(u-.5);  // x and z range from -10 to 10
-                y = 10*Math.PI*(v-.5);
-                z = Math.cos(Math.sqrt(x*x+y*y));
-    target.set( x, y, z );
-}
 
 function drawpt(){
   var surfaceGeometry = new THREE.ParametricGeometry(surfaceFunction, 128, 128);
