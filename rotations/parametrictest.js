@@ -150,22 +150,24 @@ function f(x) {
 function drawAxes(){
   scene.remove(scene.getObjectByName("axesobject"));
 
-  var BIGIN=-20, END=20, WIDTH=END-BIGIN;
+  var XBIGIN=-20, XEND=20, XWIDTH=XEND-XBIGIN;
+  var YBIGIN=-10, YEND=10, YWIDTH=YEND-YBIGIN;
+  var ZBIGIN=-10, ZEND=10, ZWIDTH=ZEND-ZBIGIN;
   var axesGroup = new THREE.Object3D;
   axesGroup.name="axesobject";
 
   var axesgeometry = new THREE.Geometry();
   var xaxisGeometry = new THREE.Geometry();
-  xaxisGeometry.vertices.push(new THREE.Vector3(-END-2,0,0));
-  xaxisGeometry.vertices.push(new THREE.Vector3( END+2,0,0));
+  xaxisGeometry.vertices.push(new THREE.Vector3(-XEND,0,0));
+  xaxisGeometry.vertices.push(new THREE.Vector3( XEND,0,0));
 
   var yaxisGeometry = new THREE.Geometry();
-  yaxisGeometry.vertices.push(new THREE.Vector3(0,-END-2,0));
-  yaxisGeometry.vertices.push(new THREE.Vector3(0, END+2,0));
+  yaxisGeometry.vertices.push(new THREE.Vector3(0,-YEND,0));
+  yaxisGeometry.vertices.push(new THREE.Vector3(0, YEND,0));
 
   var zaxisGeometry = new THREE.Geometry();
-  zaxisGeometry.vertices.push(new THREE.Vector3(0,0,-END-2));
-  zaxisGeometry.vertices.push(new THREE.Vector3(0,0, END+2));
+  zaxisGeometry.vertices.push(new THREE.Vector3(0,0,-ZEND));
+  zaxisGeometry.vertices.push(new THREE.Vector3(0,0, ZEND));
 
   var axesmaterial = new THREE.LineBasicMaterial( { color: 0x0FF0000, opacity: 1} );
   var xaxisLine = new THREE.Line(xaxisGeometry,axesmaterial);
@@ -179,7 +181,7 @@ function drawAxes(){
 
   // add in tickmarks
   var xticklength = math.parse(document.getElementById("x_tick").value).compile().eval();
-  for (var i =0; i<END; i+=xticklength){
+  for (var i =0; i<XEND; i+=xticklength){
     xtG = new THREE.Geometry();
     xtG.vertices.push(new THREE.Vector3(i, .2,0));
     xtG.vertices.push(new THREE.Vector3(i,-.2,0));
@@ -194,7 +196,7 @@ function drawAxes(){
 
 
   var yticklength = math.parse(document.getElementById("y_tick").value).compile().eval();
-  for (var i =0; i<END; i+=yticklength){
+  for (var i =0; i<YEND; i+=yticklength){
     ytG = new THREE.Geometry();
     ytG.vertices.push(new THREE.Vector3( .2, i, 0));
     ytG.vertices.push(new THREE.Vector3(-.2, i, 0));
@@ -208,7 +210,7 @@ function drawAxes(){
   }
 
   var zticklength = math.parse(document.getElementById("z_tick").value).compile().eval();
-  for (var i =0; i<END; i+=zticklength){
+  for (var i =0; i<ZEND; i+=zticklength){
     ztG = new THREE.Geometry();
     ztG.vertices.push(new THREE.Vector3( .2, 0,i));
     ztG.vertices.push(new THREE.Vector3(-.2, 0,i));
@@ -240,20 +242,26 @@ function drawAxes(){
 
 
   // put balls at the ends of the axes
-  var sg = new THREE.SphereGeometry(1);
+//  var sg = new THREE.SphereGeometry(1);
+  var sg = new THREE.CylinderGeometry(.2,0,1,10);
   var smat = new THREE.MeshPhongMaterial({color:0xff0000});
   var smesh = new THREE.Mesh(sg, smat);
-  smesh.translateX(END+2);
+  smesh.translateX(XEND);
+  smesh.rotateZ(Math.PI/2);
   axesGroup.add(smesh);
-  var sg = new THREE.SphereGeometry(1);
+  // var sg = new THREE.SphereGeometry(1);
+  var sg = new THREE.CylinderGeometry(.2,0,1,10);
   var smat = new THREE.MeshPhongMaterial({color:0x00ff00});
   var smesh = new THREE.Mesh(sg, smat);
-  smesh.translateY(END+2);
+  smesh.translateY(YEND);
+  smesh.rotateZ(Math.PI);
   axesGroup.add(smesh);
-  var sg = new THREE.SphereGeometry(1);
+  // var sg = new THREE.SphereGeometry(1);
+  var sg = new THREE.CylinderGeometry(.2,0,1,10);
   var smat = new THREE.MeshPhongMaterial({color:0x0000ff});
   var smesh = new THREE.Mesh(sg, smat);
-  smesh.translateZ(END+2);
+  smesh.translateZ(ZEND);
+  smesh.rotateX(-Math.PI/2);
   axesGroup.add(smesh);
   scene.add(axesGroup);
 }
