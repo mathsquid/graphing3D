@@ -2,15 +2,13 @@
 <head>
   <title>Plot Sample</title>
   <style>
-			body { margin: 0; }
+			body { margin: 20; }
 			canvas { width: 50%; height: 50% }
 		</style>
 </head>
-<body onload="drawAxes(); drawCurve()">
-<hr>
+<body onload="drawAxes(); drawCurve('f')">
 <div><canvas id="stage" width="500" height="500"></canvas><br>
 </div>
-<hr>
 <script type="text/javascript" src="three.min.js"></script>
 <script language="Javascript" type="text/javascript" src="https://www.westga.edu/~cleach/graphing/math.min.js"></script>
 <script type="text/javascript" src="TrackballControls.js"></script>
@@ -18,17 +16,18 @@
 
 
 <br>
-Graphing 2d and rotation.<br>
 
-f(x) = <input type="TEXT"  id="functionString" value = "exp(x/4)*sin(x/2)" size="20" onchange="drawCurve()">
+f(x) = <input type="TEXT"  id="ffunctionString" value = "3sin(x/2)" size="20" onchange="drawCurve('f')">  <button onclick="drawCurve('f')">DrawCurve</button>
 
-a = <input type="TEXT" id="avalue" value="-2.5pi"  size="10" onchange=drawDisks();>
-b = <input type="TEXT" id="bvalue" value="2.5pi"  size="10" onchange=drawDisks();>
-n = <input type="TEXT" id="nvalue" value="100"  size="10" onchange=drawDisks();>
+<br>
+<br>
+g(x) = <input type="TEXT"  id="gfunctionString" value = "sin(x)" size="20" onchange="drawCurve('g')">  <button onclick="drawCurve('g')">DrawCurve</button>
 
-
-<button onclick="drawCurve()">DrawCurve</button>
-<button onclick="drawDisks()">Draw Disks</button>
+<br>
+<br>
+a = <input type="TEXT" id="avalue" value="pi/2"   size="10">
+b = <input type="TEXT" id="bvalue" value="3pi/2"  size="10">
+n = <input type="TEXT" id="nvalue" value="100"    size="10">        <button onclick="drawDisks()">Draw Disks</button>
 
 <h3> Window Settings </h3>
   <table>
@@ -42,7 +41,7 @@ n = <input type="TEXT" id="nvalue" value="100"  size="10" onchange=drawDisks();>
           <td>x</td>
           <td><input type="TEXT" id="x_min" value="-8" size="10"></td>
           <td><input type="TEXT" id="x_max" value="8"  size="10"></td>
-          <td><input type="TEXT" id="x_tick" value="1"  size="10"></td>
+          <td><input type="TEXT" id="x_tick" value="pi/2"  size="10"></td>
       </tr>
       <tr>
           <td>y</td>

@@ -2,6 +2,7 @@ var container, scene, camera, renderer, controls;
 
 init();
 var ff;
+var a, b, numdisks;
 
 function init(){
   scene = new THREE.Scene();
@@ -43,21 +44,45 @@ function init(){
 
 
 
-function drawCurve(){
+function drawCurve(fORg){
   parseAndCompile();
-  scene.remove(scene.getObjectByName("curve"));
+  scene.remove(scene.getObjectByName("curve"+fORg));
+  scene.remove(scene.getObjectByName("verticalLines"));
   scene.remove(scene.getObjectByName("diskset"));
+
   var c = new THREE.Curve()
   c.getPoint = function(t){
     var  s = (t-.5)*12*Math.PI;
-    return new THREE.Vector2(s,f(s));//Math.exp(s/4)*Math.cos(s/2));
+    if (fORg=='f') return new THREE.Vector2(s,f(s));
+    if (fORg=='g') return new THREE.Vector2(s,g(s));
   };
 
   var gg = new THREE.BufferGeometry().setFromPoints(c.getPoints(200));
   var cm = new THREE.LineBasicMaterial({color: 0x0077ff});
   var co = new THREE.Line(gg, cm);
-  co.name="curve";
+  co.name="curve"+fORg;
   scene.add(co);
+
+
+  var verticalLines = new THREE.Object3D();
+
+  var a = math.parse(document.getElementById("avalue").value).compile().eval();
+  var b = math.parse(document.getElementById("bvalue").value).compile().eval();
+
+  var lineaG = new THREE.Geometry();
+  lineaG.vertices.push(new THREE.Vector3(a, g(a), 0));
+  lineaG.vertices.push(new THREE.Vector3(a, f(a), 0));
+  var lineaL=new THREE.Line(lineaG,cm);
+  verticalLines.add(lineaL);
+  var lineaG = new THREE.Geometry();
+  lineaG.vertices.push(new THREE.Vector3(b, g(b), 0));
+  lineaG.vertices.push(new THREE.Vector3(b, f(b), 0));
+  var lineaL=new THREE.Line(lineaG,cm);
+  verticalLines.add(lineaL);
+  verticalLines.name="verticalLines";
+  scene.add(verticalLines);
+
+
 }
 
 function clearGraph(){
@@ -75,14 +100,13 @@ function drawDisks(){
   scene.remove(scene.getObjectByName("diskset"));
     parseAndCompile();
   ff = f;
-//  ff = function(x) {return Math.exp(x/4)*Math.cos(x/2);}
   var diskmat = new THREE.MeshPhongMaterial({
   // color: "white",
   color: 0x00ff00,
   color: 0xff7700,
   specular: 0x080808,
-  // transparent:true,
-  // opacity:.5,
+  transparent:true,
+  opacity:.7,
   side: THREE.DoubleSide
 });
 
@@ -136,13 +160,18 @@ function drawpt(){
 
 
 function parseAndCompile(){
-  var ft = document.getElementById("functionString").value;
-  exp = math.parse(ft).compile();
-  deriv = math.derivative(ft, "x").compile();
+  var ftf = document.getElementById("ffunctionString").value;
+  expf = math.parse(ftf).compile();
+  var ftg = document.getElementById("gfunctionString").value;
+  expg = math.parse(ftg).compile();
+//  deriv = math.derivative(ft, "x").compile();
 }
 
 function f(x) {
-  return exp.eval({"x":x});
+  return expf.eval({"x":x});
+}
+function g(x) {
+  return expg.eval({"x":x});
 }
 
 
