@@ -4,6 +4,23 @@ init();
 var ff;
 var a, b, numdisks;
 
+var diskmat = new THREE.MeshPhongMaterial({
+  color: 0x00ff00,
+  color: 0xff7700,
+  specular: 0x080808,
+  transparent:true,
+  opacity:1,
+  side: THREE.DoubleSide
+});
+var diskmat2 = new THREE.MeshPhongMaterial({
+  color: 0x00ff00,
+  color: 0xff7700,
+  specular: 0x080808,
+  side: THREE.DoubleSide
+});
+
+
+
 function init(){
   scene = new THREE.Scene();
   var tt=0;
@@ -42,7 +59,31 @@ function init(){
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
 
+function washer(bigR, littleR, thickness){
 
+  var washer = new THREE.Shape();
+  washer.moveTo(bigR,0);
+  for (var i=0; i<50; i++){
+    washer.lineTo(bigR*Math.cos(i*Math.PI*.04),bigR*Math.sin(i*Math.PI*.04));
+  }
+  washer.lineTo(bigR,0);
+  var hole = new THREE.Path();
+  hole.moveTo(littleR,0);
+  for (var i=0; i<50; i++){
+    hole.lineTo(littleR*Math.cos(i*Math.PI*.04),littleR*Math.sin(i*Math.PI*.04))
+  }
+  washer.lineTo(littleR,0);
+  washer.holes.push(hole);
+  var extrudeSettings = { depth: thickness, bevelEnabled: false };
+
+  var geometry = new THREE.ExtrudeGeometry( washer, extrudeSettings );
+
+  geometry.rotateX(Math.PI/2);
+  return geometry;
+  // var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial() );
+  // scene.add(mesh);
+
+}
 
 function drawCurve(fORg){
   parseAndCompile();
@@ -87,58 +128,73 @@ function drawCurve(fORg){
 
 
 function hideDisks(){
-    scene.remove(scene.getObjectByName("diskset"));  
+  scene.remove(scene.getObjectByName("diskset"));
 }
+
 function drawDisks(){
-  var a = math.parse(document.getElementById("avalue").value).compile().eval();
-  var b = math.parse(document.getElementById("bvalue").value).compile().eval();
-  var numdisks = math.parse(document.getElementById("nvalue").value).compile().eval();
+  a = math.parse(document.getElementById("avalue").value).compile().eval();
+  b = math.parse(document.getElementById("bvalue").value).compile().eval();
+  numdisks = math.parse(document.getElementById("nvalue").value).compile().eval();
 
 
   scene.remove(scene.getObjectByName("diskset"));
-    parseAndCompile();
+  parseAndCompile();
   ff = f;
-  var diskmat = new THREE.MeshPhongMaterial({
-  // color: "white",
-  color: 0x00ff00,
-  color: 0xff7700,
-  specular: 0x080808,
-  transparent:true,
-  opacity:.7,
-  side: THREE.DoubleSide
-});
 
   var diskset = new THREE.Object3D;
   diskset.name ="diskset";
   var thickness = (b-a)/numdisks;
   for (var i=a+thickness*.5; i<b; i+=thickness){
     var radius=Math.abs(ff(i));
-    if (radius<.01) radius=.01;
-      var dg = new THREE.CylinderGeometry(radius,radius,thickness,50);
-      var dm = new THREE.Mesh(dg,diskmat);
-      dm.rotateZ(Math.PI/2)
-      dm.position.x = i;
-      diskset.add(dm);
-    }
-    scene.add(diskset);
+    var littleRadius = Math.abs(g(i));
+    if (radius<.001) radius=.001;
+    if (littleRadius<.001) littleRadius=.001;
+    // var dg = new THREE.CylinderGeometry(radius,radius,thickness,50);
+    var dg = washer(radius,littleRadius,thickness);
+    var dm = new THREE.Mesh(dg,diskmat);
+    dm.rotateZ(Math.PI/2)
+    dm.position.x = i;
+    diskset.add(dm);
+  }
+  scene.add(diskset);
 
 
 
 }
 
 
+function h123(){
+  ds = scene.getObjectByName("diskset");
+  for (var ii=0; ii<numdisks; ii++) ds.children[ii].visible = false;
+
+{
+  (function theLoop (i) {
+    setTimeout(function () {
+        if(i<numdisks-1) ds.children[i+1].visible = false;
+        ds.children[i].visible = true;
+      if (--i) {          // If i > 0, keep going
+        theLoop(i);       // Call the loop again, and pass it the current value of i
+      }
+    }, 1000/numdisks);
+  })(numdisks-1);
+}
+// for (var ii=0; ii<numdisks; ii++) ds.children[ii].visible = true;
+}
+
+
+
 function drawpt(){
   var surfaceGeometry = new THREE.ParametricGeometry(surfaceFunction, 128, 128);
-      var material = new THREE.MeshPhongMaterial({
-        // color: "white",
-        color: 0x00ff00,
-        color: 0xff7700,
-        // wireframe:true,
-        specular: 0x080808,
-        side: THREE.DoubleSide
-      });
-      var surface = new THREE.Mesh( surfaceGeometry, material );
-      scene.add(surface);
+  var material = new THREE.MeshPhongMaterial({
+    // color: "white",
+    color: 0x00ff00,
+    color: 0xff7700,
+    // wireframe:true,
+    specular: 0x080808,
+    side: THREE.DoubleSide
+  });
+  var surface = new THREE.Mesh( surfaceGeometry, material );
+  scene.add(surface);
 }
 
 
@@ -147,7 +203,7 @@ function parseAndCompile(){
   expf = math.parse(ftf).compile();
   var ftg = document.getElementById("gfunctionString").value;
   expg = math.parse(ftg).compile();
-//  deriv = math.derivative(ft, "x").compile();
+  //  deriv = math.derivative(ft, "x").compile();
 }
 
 function f(x) {
@@ -254,7 +310,7 @@ function drawAxes(){
 
 
   // put balls at the ends of the axes
-//  var sg = new THREE.SphereGeometry(1);
+  //  var sg = new THREE.SphereGeometry(1);
   var sg = new THREE.CylinderGeometry(.2,0,1,10);
   var smat = new THREE.MeshPhongMaterial({color:0xff0000});
   var smesh = new THREE.Mesh(sg, smat);
