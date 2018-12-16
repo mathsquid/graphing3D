@@ -13,10 +13,18 @@ var diskmat = new THREE.MeshPhongMaterial({
 });
 var diskmat2 = new THREE.MeshPhongMaterial({
   color: 0x00ff00,
-  color: 0xff0000,
+  color: 0xff7700,
   // specular: 0x080808,
   transparent:true,
-  opacity:1,
+  opacity:.5,
+  side: THREE.DoubleSide
+});
+var diskmat3 = new THREE.MeshPhongMaterial({
+  color: 0x00ff00,
+  color: 0xff7700,
+  // specular: 0x080808,
+  transparent:true,
+  opacity:0,
   side: THREE.DoubleSide
 });
 
@@ -63,6 +71,24 @@ function init(){
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
 
+
+function latheRegion(){
+  a = math.parse(document.getElementById("avalue").value).compile().eval();
+  b = math.parse(document.getElementById("bvalue").value).compile().eval();
+  var width = (b-a)/100;
+  var points=[];
+  points.push(new THREE.Vector2(a,g(a)));
+  for (var i=a; i<=b; i+=width) points.push(new THREE.Vector2(i,f(i)));
+  points.push(new THREE.Vector2(b,g(b)));
+  for (var i=b; i>=a; i-=width)points.push(new THREE.Vector2(i,g(i)));
+  points.push(new THREE.Vector2(a,g(a)));
+  var geometry = new THREE.LatheGeometry( points );
+  var material = new THREE.MeshPhongMaterial({transparent:true, opacity:.5, color:0x884444});
+  var lathe = new THREE.Mesh( geometry, material );
+  scene.add( lathe );
+}
+
+
 function highlightRegion(){
   scene.remove(scene.getObjectByName("region"));
 
@@ -72,9 +98,9 @@ function highlightRegion(){
 
   var region = new THREE.Shape();
   region.moveTo(a,g(a));
-  for (var i=a; i<=b; i+=width)region.lineTo(i,f(i));
+  for (var i=a; i<=b; i+=width)region.lineTo(i,math.max(f(i),g(i)));
   region.lineTo(b,g(b));
-  for (var i=b; i>=a; i-=width)region.lineTo(i,g(i));
+  for (var i=b; i>=a; i-=width)region.lineTo(i,math.min(f(i),g(i)));
   region.lineTo(a,g(a));
 
 
@@ -169,14 +195,13 @@ function drawDisks(){
 
   scene.remove(scene.getObjectByName("diskset"));
   parseAndCompile();
-  ff = f;
 
   var diskset = new THREE.Object3D;
   diskset.name ="diskset";
   var thickness = (b-a)/numdisks;
   for (var i=a+thickness*.5; i<b; i+=thickness){
-    var radius=Math.abs(ff(i));
-    var littleRadius = Math.abs(g(i));
+    var radius=Math.max(Math.abs(f(i)),Math.abs(g(i)));
+    var littleRadius = Math.min(Math.abs(g(i)),Math.abs(f(i)));
     if (radius<.001) radius=.001;
     if (littleRadius<.001) littleRadius=.001;
     // var dg = new THREE.CylinderGeometry(radius,radius,thickness,50);
@@ -200,7 +225,7 @@ function h123(){
 {
   (function theLoop (i) {
     setTimeout(function () {
-        if(i<numdisks-1) ds.children[i+1].visible = false;
+        if(i<numdisks-1) ds.children[i+1].material = diskmat2;
         ds.children[i].visible = true;
       if (--i) {          // If i > 0, keep going
         theLoop(i);       // Call the loop again, and pass it the current value of i
