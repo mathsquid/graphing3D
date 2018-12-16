@@ -5,17 +5,18 @@ var ff;
 var a, b, numdisks;
 
 var diskmat = new THREE.MeshPhongMaterial({
-  color: 0x00ff00,
   color: 0xff7700,
-  specular: 0x080808,
+   specular: 0x080808,
   transparent:true,
   opacity:1,
   side: THREE.DoubleSide
 });
 var diskmat2 = new THREE.MeshPhongMaterial({
   color: 0x00ff00,
-  color: 0xff7700,
-  specular: 0x080808,
+  color: 0xff0000,
+  // specular: 0x080808,
+  transparent:true,
+  opacity:1,
   side: THREE.DoubleSide
 });
 
@@ -32,6 +33,9 @@ function init(){
   var light = new THREE.DirectionalLight(0xffffff, 0.5);
   light.position.set(0,0,1);
   camera.add(light);  // Viewpoint light moves with camera.
+
+
+
   scene.add(camera);
   light = new THREE.PointLight(0xffffff, 1);  // A light shining from above the surface.
   light.position.set(0,20,0);
@@ -58,6 +62,32 @@ function init(){
 }
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
+
+function highlightRegion(){
+  scene.remove(scene.getObjectByName("region"));
+
+  a = math.parse(document.getElementById("avalue").value).compile().eval();
+  b = math.parse(document.getElementById("bvalue").value).compile().eval();
+  var width = (b-a)/100;
+
+  var region = new THREE.Shape();
+  region.moveTo(a,g(a));
+  for (var i=a; i<=b; i+=width)region.lineTo(i,f(i));
+  region.lineTo(b,g(b));
+  for (var i=b; i>=a; i-=width)region.lineTo(i,g(i));
+  region.lineTo(a,g(a));
+
+
+  var regiongeom = new THREE.ShapeGeometry(region);
+  var regionmat = new THREE.MeshPhongMaterial({transparent:true, opacity:.5, color:0x884444, side:THREE.DoubleSide});
+  var regionMesh = new THREE.Mesh(regiongeom, regionmat);
+  regionMesh.name="region";
+  scene.add(regionMesh);
+}
+
+function unHighlightRegion(){
+  scene.remove(scene.getObjectByName("region"));
+}
 
 function washer(bigR, littleR, thickness){
 
@@ -107,8 +137,8 @@ function drawCurve(fORg){
 
   var verticalLines = new THREE.Object3D();
 
-  var a = math.parse(document.getElementById("avalue").value).compile().eval();
-  var b = math.parse(document.getElementById("bvalue").value).compile().eval();
+  a = math.parse(document.getElementById("avalue").value).compile().eval();
+  b = math.parse(document.getElementById("bvalue").value).compile().eval();
 
   var lineaG = new THREE.Geometry();
   lineaG.vertices.push(new THREE.Vector3(a, g(a), 0));
