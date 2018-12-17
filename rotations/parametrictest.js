@@ -8,7 +8,7 @@ var diskmat = new THREE.MeshPhongMaterial({
   color: 0xff7700,
    specular: 0x080808,
   transparent:true,
-  opacity:1,
+  opacity:.7,
   side: THREE.DoubleSide
 });
 var diskmat2 = new THREE.MeshPhongMaterial({
@@ -20,11 +20,10 @@ var diskmat2 = new THREE.MeshPhongMaterial({
   side: THREE.DoubleSide
 });
 var diskmat3 = new THREE.MeshPhongMaterial({
-  color: 0x00ff00,
-  color: 0xff7700,
+  color: 0x007700,
   // specular: 0x080808,
   transparent:true,
-  opacity:0,
+  opacity:1,
   side: THREE.DoubleSide
 });
 
@@ -99,9 +98,9 @@ function highlightRegion(){
   var region = new THREE.Shape();
   region.moveTo(a,g(a));
   for (var i=a; i<=b; i+=width)region.lineTo(i,math.max(f(i),g(i)));
-  region.lineTo(b,g(b));
+  region.lineTo(b,math.max(f(i),g(i)));
   for (var i=b; i>=a; i-=width)region.lineTo(i,math.min(f(i),g(i)));
-  region.lineTo(a,g(a));
+  region.lineTo(a,math.min(f(i),g(i)));
 
 
   var regiongeom = new THREE.ShapeGeometry(region);
@@ -206,7 +205,7 @@ function drawDisks(){
     if (littleRadius<.001) littleRadius=.001;
     // var dg = new THREE.CylinderGeometry(radius,radius,thickness,50);
     var dg = washer(radius,littleRadius,thickness);
-    var dm = new THREE.Mesh(dg,diskmat);
+    var dm = new THREE.Mesh(dg,[diskmat,diskmat3]);
     dm.rotateZ(Math.PI/2)
     dm.position.x = i;
     diskset.add(dm);
@@ -218,19 +217,20 @@ function drawDisks(){
 }
 
 
-function h123(){
+function sweep(speed){
+  drawDisks()
   ds = scene.getObjectByName("diskset");
   for (var ii=0; ii<numdisks; ii++) ds.children[ii].visible = false;
 
 {
   (function theLoop (i) {
     setTimeout(function () {
-        if(i<numdisks-1) ds.children[i+1].material = diskmat2;
+        if(i<numdisks-1) ds.children[i+1].material = [diskmat,diskmat3];
         ds.children[i].visible = true;
       if (--i) {          // If i > 0, keep going
         theLoop(i);       // Call the loop again, and pass it the current value of i
       }
-    }, 1000/numdisks);
+    }, 1000*speed/numdisks);
   })(numdisks-1);
 }
 // for (var ii=0; ii<numdisks; ii++) ds.children[ii].visible = true;
