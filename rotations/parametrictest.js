@@ -182,6 +182,7 @@ function drawCurve(fORg){
 }
 
 
+
 function hideDisks(){
   scene.remove(scene.getObjectByName("diskset"));
 }
@@ -195,6 +196,7 @@ function drawDisks(){
   scene.remove(scene.getObjectByName("diskset"));
   parseAndCompile();
 
+  var volume = 0;
   var diskset = new THREE.Object3D;
   diskset.name ="diskset";
   var thickness = (b-a)/numdisks;
@@ -209,8 +211,13 @@ function drawDisks(){
     dm.rotateZ(Math.PI/2)
     dm.position.x = i;
     diskset.add(dm);
+    volume += Math.PI*(radius*radius - littleRadius*littleRadius)*thickness;
   }
   scene.add(diskset);
+  var aa = document.getElementById("volumeOutput");
+  var b = volume/Math.PI
+  aa.innerHTML = "Volume &#8776 "+ volume +" <br>Volume &#8776 "+ b+"&#960";
+
 
 
 
