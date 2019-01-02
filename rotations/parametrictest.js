@@ -1,8 +1,8 @@
 var container, scene, camera, renderer, controls;
 
 init();
-var ff;
 var a, b, numdisks;
+var rotAxisValue=0;
 
 var diskmat = new THREE.MeshPhongMaterial({
   color: 0xff7700,
@@ -71,6 +71,9 @@ function init(){
 //-------------------------------------------------------------------------
 
 
+
+
+
 function latheRegion(){
   a = math.parse(document.getElementById("avalue").value).compile().eval();
   b = math.parse(document.getElementById("bvalue").value).compile().eval();
@@ -114,6 +117,7 @@ function unHighlightRegion(){
   scene.remove(scene.getObjectByName("region"));
 }
 
+
 function washer(bigR, littleR, thickness){
 
   var washer = new THREE.Shape();
@@ -140,10 +144,33 @@ function washer(bigR, littleR, thickness){
 
 }
 
+function drawVerticalLines(){
+  var verticalLines = new THREE.Object3D();
+  var cm = new THREE.LineBasicMaterial({color: 0x0077ff});
+
+
+  a = math.parse(document.getElementById("avalue").value).compile().eval();
+  b = math.parse(document.getElementById("bvalue").value).compile().eval();
+
+  scene.remove(scene.getObjectByName("verticalLines"));
+  var lineaG = new THREE.Geometry();
+  lineaG.vertices.push(new THREE.Vector3(a, g(a), 0));
+  lineaG.vertices.push(new THREE.Vector3(a, f(a), 0));
+  var lineaL=new THREE.Line(lineaG,cm);
+  verticalLines.add(lineaL);
+  var lineaG = new THREE.Geometry();
+  lineaG.vertices.push(new THREE.Vector3(b, g(b), 0));
+  lineaG.vertices.push(new THREE.Vector3(b, f(b), 0));
+  var lineaL=new THREE.Line(lineaG,cm);
+  verticalLines.add(lineaL);
+  verticalLines.name="verticalLines";
+  scene.add(verticalLines);
+
+}
+
 function drawCurve(fORg){
   parseAndCompile();
   scene.remove(scene.getObjectByName("curve"+fORg));
-  scene.remove(scene.getObjectByName("verticalLines"));
   scene.remove(scene.getObjectByName("diskset"));
 
   var c = new THREE.Curve()
@@ -158,25 +185,9 @@ function drawCurve(fORg){
   var co = new THREE.Line(gg, cm);
   co.name="curve"+fORg;
   scene.add(co);
+  drawVerticalLines();
 
 
-  var verticalLines = new THREE.Object3D();
-
-  a = math.parse(document.getElementById("avalue").value).compile().eval();
-  b = math.parse(document.getElementById("bvalue").value).compile().eval();
-
-  var lineaG = new THREE.Geometry();
-  lineaG.vertices.push(new THREE.Vector3(a, g(a), 0));
-  lineaG.vertices.push(new THREE.Vector3(a, f(a), 0));
-  var lineaL=new THREE.Line(lineaG,cm);
-  verticalLines.add(lineaL);
-  var lineaG = new THREE.Geometry();
-  lineaG.vertices.push(new THREE.Vector3(b, g(b), 0));
-  lineaG.vertices.push(new THREE.Vector3(b, f(b), 0));
-  var lineaL=new THREE.Line(lineaG,cm);
-  verticalLines.add(lineaL);
-  verticalLines.name="verticalLines";
-  scene.add(verticalLines);
 
 
 }
@@ -201,8 +212,8 @@ function drawDisks(){
   diskset.name ="diskset";
   var thickness = (b-a)/numdisks;
   for (var i=a+thickness*.5; i<b; i+=thickness){
-    var radius=Math.max(Math.abs(f(i)),Math.abs(g(i)));
-    var littleRadius = Math.min(Math.abs(g(i)),Math.abs(f(i)));
+    var radius=Math.max(Math.abs(f(i)-rotAxisValue),Math.abs(g(i)-rotAxisValue));
+    var littleRadius = Math.min(Math.abs(g(i)-rotAxisValue),Math.abs(f(i)-rotAxisValue));
     if (radius<.001) radius=.001;
     if (littleRadius<.001) littleRadius=.001;
     // var dg = new THREE.CylinderGeometry(radius,radius,thickness,50);
@@ -210,17 +221,14 @@ function drawDisks(){
     var dm = new THREE.Mesh(dg,[diskmat,diskmat3]);
     dm.rotateZ(Math.PI/2)
     dm.position.x = i;
+    dm.position.y +=rotAxisValue;
     diskset.add(dm);
     volume += Math.PI*(radius*radius - littleRadius*littleRadius)*thickness;
   }
   scene.add(diskset);
   var aa = document.getElementById("volumeOutput");
   var b = volume/Math.PI
-  aa.innerHTML = "Volume &#8776 "+ volume +" <br>Volume &#8776 "+ b+"&#960";
-
-
-
-
+  aa.innerHTML = "Volume &#8776 "+ volume.toFixed(4) +" &#8776 "+ b.toFixed(4)+"&#960";
 }
 
 
@@ -353,26 +361,9 @@ function drawAxes(){
     axesGroup.add(ztL);
   }
 
-
-  // // draw the axes
-  // axesgeometry.vertices.push(new THREE.Vector3(-END-2,0,0));
-  // axesgeometry.vertices.push(new THREE.Vector3(END+2,0,0));
-  // axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
-  // axesgeometry.vertices.push(new THREE.Vector3(0,END+2,0));
-  // axesgeometry.vertices.push(new THREE.Vector3(0,-END-2,0));
-  // axesgeometry.vertices.push(new THREE.Vector3(0,0,0));
-  // axesgeometry.vertices.push(new THREE.Vector3(0,0,END+2));
-  // axesgeometry.vertices.push(new THREE.Vector3(0,0,-END-2));
-  //
-  // var axesmaterial = new THREE.LineBasicMaterial( { color: 0x0FF0000, opacity: 0.5, linewidth:4} );
-  // var axesline = new THREE.Line(axesgeometry, axesmaterial);
-  // axesGroup.add(axesline);
-
-  // add in the tickmarks
-
-
   // put balls at the ends of the axes
   //  var sg = new THREE.SphereGeometry(1);
+  // put arrows at the end of the axes
   var sg = new THREE.CylinderGeometry(.2,0,1,10);
   var smat = new THREE.MeshPhongMaterial({color:0xff0000});
   var smesh = new THREE.Mesh(sg, smat);
@@ -394,4 +385,21 @@ function drawAxes(){
   smesh.rotateX(-Math.PI/2);
   axesGroup.add(smesh);
   scene.add(axesGroup);
+}
+
+function drawRotAxis(){
+  scene.remove(scene.getObjectByName("rotAxisLine"));
+rotAxisValue = math.parse(document.getElementById("rotAxisValue").value).compile().eval();
+
+
+var XBIGIN=-20, XEND=20, XWIDTH=XEND-XBIGIN;
+
+var rotAxisGeometry = new THREE.Geometry();
+rotAxisGeometry.vertices.push(new THREE.Vector3(-XEND,rotAxisValue,0));
+rotAxisGeometry.vertices.push(new THREE.Vector3( XEND,rotAxisValue,0));
+
+var rotAxisMaterial = new THREE.LineBasicMaterial( { color: 0x0000000, opacity: 1} );
+var rotAxisLine = new THREE.Line(rotAxisGeometry,rotAxisMaterial);
+rotAxisLine.name ="rotAxisLine";
+scene.add(rotAxisLine);
 }

@@ -18,16 +18,21 @@
 
 <br>
 
-f(x) = <input type="TEXT"  id="ffunctionString" value = "8-.5x" size="20" onchange="drawCurve('f')">  <button onclick="drawCurve('f')">DrawCurve</button>
+f(x) = <input type="TEXT"  id="ffunctionString" value = "8-.5x" size="20" onchange="drawCurve('f')">
+<button onclick="controls.reset()"> Reset view</button>
+<br>
+<br>
+g(x) = <input type="TEXT"  id="gfunctionString" value = "4-.25x" size="20" onchange="drawCurve('g')">
 
 <br>
 <br>
-g(x) = <input type="TEXT"  id="gfunctionString" value = "4-.25x" size="20" onchange="drawCurve('g')">  <button onclick="drawCurve('g')">DrawCurve</button>
+Axis of rotation: y = <input type="TEXT" id="rotAxisValue" value =0 size="20" onchange="drawRotAxis()">
+<br>
+
 
 <br>
-<br>
-a = <input type="TEXT" id="avalue" value="0"   size="10">
-b = <input type="TEXT" id="bvalue" value="14"  size="10">
+a = <input type="TEXT" id="avalue" value="0"   size="10" onchange="drawVerticalLines()">
+b = <input type="TEXT" id="bvalue" value="14"  size="10" onchange="drawVerticalLines()">
 n = <input type="TEXT" id="nvalue" value="25"    size="10">
 <button onclick="drawDisks()">Draw Disks</button>
 <button onclick="hideDisks()">Hide Disks</button>
@@ -35,7 +40,7 @@ n = <input type="TEXT" id="nvalue" value="25"    size="10">
 <button onclick="highlightRegion()">Shade Area</button>
 <button onclick="unHighlightRegion()">Unshade Area</button>
 
-<p id = "volumeOutput"> Volume <br>Volume</p>
+<font size=6><p id = "volumeOutput"> </p> </font>
 
 
 <h3> Window Settings </h3>
