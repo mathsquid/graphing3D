@@ -11,16 +11,6 @@ var diskmat = new THREE.MeshPhongMaterial({
   opacity:.7,
   side: THREE.DoubleSide
 });
-//
-//
-// var diskmat = new THREE.MeshPhongMaterial({
-//   color: 0xff7700,
-//    specular: 0x080808,
-//   transparent:true,
-//   opacity:.2,
-//   side: THREE.DoubleSide
-// });
-//
 
 var diskmat3 = new THREE.MeshPhongMaterial({
   color: 0x007700,
@@ -72,27 +62,6 @@ function init(){
 }
 //--END OF INIT FUNCTION---------------------------------------------------
 //-------------------------------------------------------------------------
-
-
-
-
-
-function latheRegion(){
-  a = math.parse(document.getElementById("avalue").value).compile().eval();
-  b = math.parse(document.getElementById("bvalue").value).compile().eval();
-  var width = (b-a)/100;
-  var points=[];
-  points.push(new THREE.Vector2(a,g(a)));
-  for (var i=a; i<=b; i+=width) points.push(new THREE.Vector2(i,f(i)));
-  points.push(new THREE.Vector2(b,g(b)));
-  for (var i=b; i>=a; i-=width)points.push(new THREE.Vector2(i,g(i)));
-  points.push(new THREE.Vector2(a,g(a)));
-  var geometry = new THREE.LatheGeometry( points );
-  var material = new THREE.MeshPhongMaterial({transparent:true, opacity:.5, color:0x884444});
-  var lathe = new THREE.Mesh( geometry, material );
-  scene.add( lathe );
-}
-
 
 function highlightRegion(){
   scene.remove(scene.getObjectByName("region"));
@@ -221,7 +190,8 @@ function drawDisks(){
     if (littleRadius<.001) littleRadius=.001;
     // var dg = new THREE.CylinderGeometry(radius,radius,thickness,50);
     var dg = washer(radius,littleRadius,thickness);
-    var dm = new THREE.Mesh(dg,[diskmat,diskmat3]);
+    // var dm = new THREE.Mesh(dg,[diskmat,diskmat3]);
+    var dm = new THREE.Mesh(dg,diskmat);
     dm.rotateZ(Math.PI/2)
     dm.position.x = i;
     dm.position.y +=rotAxisValue;
@@ -263,20 +233,18 @@ function changeShellOpacity(){
 
 var hls = 0;
 function highlightShell(){
-  var s = scene.getObjectByName("shellset");
+  var s = scene.getObjectByName("diskset");
   var slider = document.getElementById("myRange")
   var prev=hls;
   hls=Math.floor(slider.value/100*numdisks)-1;
   if (hls==-1) hls=0;
   s.children[prev].material=diskmat;
   s.children[hls].material=diskmat3;
-
-
 }
 
 
 function hideShells(){
-  scene.remove(scene.getObjectByName("shellset"));
+  scene.remove(scene.getObjectByName("diskset"));
 }
 
 function drawShells(){
@@ -284,12 +252,12 @@ function drawShells(){
   b = math.parse(document.getElementById("bvalue").value).compile().eval();
   numdisks = math.parse(document.getElementById("nvalue").value).compile().eval();
 
-  scene.remove(scene.getObjectByName("shellset"));
+  scene.remove(scene.getObjectByName("diskset"));
   parseAndCompile();
 
   var volume = 0;
-  var shellset = new THREE.Object3D;
-  shellset.name ="shellset";
+  var diskset = new THREE.Object3D;
+  diskset.name ="diskset";
   var thickness = (b-a)/numdisks;
 //---------------------------------------------
   for (var i=a+thickness*.5; i<b; i+=thickness){
@@ -298,10 +266,10 @@ function drawShells(){
     var dm = new THREE.Mesh(dg,diskmat);
     dm.rotateX(Math.PI);
     dm.position.y +=math.min(f(i),g(i));
-    shellset.add(dm);
+    diskset.add(dm);
     volume += 2*Math.PI * i * height *thickness;
   }
-  scene.add(shellset);
+  scene.add(diskset);
   var aa = document.getElementById("volumeOutput");
   var b = volume/Math.PI
   aa.innerHTML = "Volume &#8776 "+ volume.toFixed(4) +" &#8776 "+ b.toFixed(4)+"&#960";
@@ -434,17 +402,13 @@ function drawAxes(){
 
 function drawRotAxis(){
   scene.remove(scene.getObjectByName("rotAxisLine"));
-rotAxisValue = math.parse(document.getElementById("rotAxisValue").value).compile().eval();
-
-
-var XBIGIN=-20, XEND=20, XWIDTH=XEND-XBIGIN;
-
-var rotAxisGeometry = new THREE.Geometry();
-rotAxisGeometry.vertices.push(new THREE.Vector3(-XEND,rotAxisValue,0));
-rotAxisGeometry.vertices.push(new THREE.Vector3( XEND,rotAxisValue,0));
-
-var rotAxisMaterial = new THREE.LineBasicMaterial( { color: 0x0000000, opacity: 1} );
-var rotAxisLine = new THREE.Line(rotAxisGeometry,rotAxisMaterial);
-rotAxisLine.name ="rotAxisLine";
-scene.add(rotAxisLine);
+  rotAxisValue = math.parse(document.getElementById("rotAxisValue").value).compile().eval();
+  var XBIGIN=-20, XEND=20, XWIDTH=XEND-XBIGIN;
+  var rotAxisGeometry = new THREE.Geometry();
+  rotAxisGeometry.vertices.push(new THREE.Vector3(-XEND,rotAxisValue,0));
+  rotAxisGeometry.vertices.push(new THREE.Vector3( XEND,rotAxisValue,0));
+  var rotAxisMaterial = new THREE.LineBasicMaterial( { color: 0x0000000, opacity: 1} );
+  var rotAxisLine = new THREE.Line(rotAxisGeometry,rotAxisMaterial);
+  rotAxisLine.name ="rotAxisLine";
+  scene.add(rotAxisLine);
 }
