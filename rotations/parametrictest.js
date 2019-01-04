@@ -11,14 +11,6 @@ var diskmat = new THREE.MeshPhongMaterial({
   opacity:.7,
   side: THREE.DoubleSide
 });
-var diskmat2 = new THREE.MeshPhongMaterial({
-  color: 0x00ff00,
-  color: 0xff7700,
-  // specular: 0x080808,
-  transparent:true,
-  opacity:.5,
-  side: THREE.DoubleSide
-});
 var diskmat3 = new THREE.MeshPhongMaterial({
   color: 0x007700,
   // specular: 0x080808,
@@ -251,21 +243,56 @@ function sweep(speed){
 // for (var ii=0; ii<numdisks; ii++) ds.children[ii].visible = true;
 }
 
+var hls = 0;
+function highlightShell(){
+  var s = scene.getObjectByName("shellset");
+  var slider = document.getElementById("myRange")
+  var prev=hls;
+  hls=Math.floor(slider.value/100*numdisks)-1;
+  if (hls==-1) hls=0;
+  s.children[prev].material=diskmat;
+  s.children[hls].material=diskmat3;
 
 
-function drawpt(){
-  var surfaceGeometry = new THREE.ParametricGeometry(surfaceFunction, 128, 128);
-  var material = new THREE.MeshPhongMaterial({
-    // color: "white",
-    color: 0x00ff00,
-    color: 0xff7700,
-    // wireframe:true,
-    specular: 0x080808,
-    side: THREE.DoubleSide
-  });
-  var surface = new THREE.Mesh( surfaceGeometry, material );
-  scene.add(surface);
 }
+
+
+function hideShells(){
+  scene.remove(scene.getObjectByName("shellset"));
+}
+
+function drawShells(){
+  a = math.parse(document.getElementById("avalue").value).compile().eval();
+  b = math.parse(document.getElementById("bvalue").value).compile().eval();
+  numdisks = math.parse(document.getElementById("nvalue").value).compile().eval();
+
+  scene.remove(scene.getObjectByName("shellset"));
+  parseAndCompile();
+
+  var volume = 0;
+  var shellset = new THREE.Object3D;
+  shellset.name ="shellset";
+  var thickness = (b-a)/numdisks;
+//---------------------------------------------
+  for (var i=a+thickness*.5; i<b; i+=thickness){
+    var height = math.abs(f(i)-g(i));
+    var dg = washer(i+thickness,i,height);
+    var dm = new THREE.Mesh(dg,diskmat);
+    dm.rotateX(Math.PI);
+    dm.position.y +=math.min(f(i),g(i));
+    shellset.add(dm);
+    volume += 2*Math.PI * i * height *thickness;
+  }
+  scene.add(shellset);
+  var aa = document.getElementById("volumeOutput");
+  var b = volume/Math.PI
+  aa.innerHTML = "Volume &#8776 "+ volume.toFixed(4) +" &#8776 "+ b.toFixed(4)+"&#960";
+//---------------------------------------------}
+}
+
+
+
+
 
 
 function parseAndCompile(){
