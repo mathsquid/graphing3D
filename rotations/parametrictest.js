@@ -11,6 +11,17 @@ var diskmat = new THREE.MeshPhongMaterial({
   opacity:.7,
   side: THREE.DoubleSide
 });
+//
+//
+// var diskmat = new THREE.MeshPhongMaterial({
+//   color: 0xff7700,
+//    specular: 0x080808,
+//   transparent:true,
+//   opacity:.2,
+//   side: THREE.DoubleSide
+// });
+//
+
 var diskmat3 = new THREE.MeshPhongMaterial({
   color: 0x007700,
   // specular: 0x080808,
@@ -242,6 +253,13 @@ function sweep(speed){
 }
 // for (var ii=0; ii<numdisks; ii++) ds.children[ii].visible = true;
 }
+
+
+function changeShellOpacity(){
+  var shellOpacitySlider = document.getElementById("shellOpacitySlider")
+  diskmat.opacity=shellOpacitySlider.value/10;
+}
+
 
 var hls = 0;
 function highlightShell(){

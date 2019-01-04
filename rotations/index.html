@@ -18,11 +18,11 @@
 
 <br>
 
-f(x) = <input type="TEXT"  id="ffunctionString" value = "8-.5x" size="20" onchange="drawCurve('f')">
+f(x) = <input type="TEXT"  id="ffunctionString" value = "9-x^2" size="20" onchange="drawCurve('f')">
 <button onclick="controls.reset()"> Reset view</button>
 <br>
 <br>
-g(x) = <input type="TEXT"  id="gfunctionString" value = "4-.25x" size="20" onchange="drawCurve('g')">
+g(x) = <input type="TEXT"  id="gfunctionString" value = "0" size="20" onchange="drawCurve('g')">
 
 <br>
 <br>
@@ -32,7 +32,7 @@ Axis of rotation: y = <input type="TEXT" id="rotAxisValue" value =0 size="20" on
 
 <br>
 a = <input type="TEXT" id="avalue" value="0"   size="10" onchange="drawVerticalLines()">
-b = <input type="TEXT" id="bvalue" value="14"  size="10" onchange="drawVerticalLines()">
+b = <input type="TEXT" id="bvalue" value="3"  size="10" onchange="drawVerticalLines()">
 n = <input type="TEXT" id="nvalue" value="25"    size="10">
 <button onclick="drawDisks()">Draw Disks</button>
 <button onclick="hideDisks()">Hide Disks</button>
@@ -43,6 +43,9 @@ n = <input type="TEXT" id="nvalue" value="25"    size="10">
 <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onchange="highlightShell()">
 <button onclick="drawShells()">Draw Shells</button>
 <button onclick="hideShells()">Hide Shells</button>
+
+<input type="range" min="1" max="10" value="2" class="slider" id="shellOpacitySlider" onchange="changeShellOpacity()">
+
 
 
 <font size=6><p id = "volumeOutput"> </p> </font>
