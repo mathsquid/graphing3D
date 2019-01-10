@@ -108,7 +108,6 @@ function washer(bigR, littleR, thickness){
   var extrudeSettings = { depth: thickness, bevelEnabled: false };
 
   var geometry = new THREE.ExtrudeGeometry( washer, extrudeSettings );
-
   geometry.rotateX(Math.PI/2);
   return geometry;
   // var mesh = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial() );
