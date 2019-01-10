@@ -163,7 +163,11 @@ function drawCurve(fORg){
 
 }
 
-
+function rotateRegion(){
+  var orientation = document.getElementById("orientation");
+  if (orientation.value == "x") drawShells();
+  if (orientation.value == "y") drawDisks();
+}
 
 function hideDisks(){
   scene.remove(scene.getObjectByName("diskset"));
@@ -226,7 +230,8 @@ function sweep(speed){
 
 function changeShellOpacity(){
   var shellOpacitySlider = document.getElementById("shellOpacitySlider")
-  diskmat.opacity=shellOpacitySlider.value/10;
+  diskmat.opacity=1/(1.4**(10-shellOpacitySlider.value));
+
 }
 
 

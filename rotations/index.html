@@ -9,8 +9,13 @@
 <body onload="drawAxes(); drawCurve('f'); drawCurve('g')">
 <div><canvas id="stage" width="500" height="500"></canvas><br>
 </div>
+
+
+<!-- <script type="text/javascript" src="https://www.westga.edu/~cleach/graphing/three.min.js"></script>
+<script language="Javascript" type="text/javascript" src="https://www.westga.edu/~cleach/graphing/math.min.js"></script> -->
 <script type="text/javascript" src="https://www.westga.edu/~cleach/graphing/three.min.js"></script>
 <script language="Javascript" type="text/javascript" src="https://www.westga.edu/~cleach/graphing/math.min.js"></script>
+
 <!-- <script language="Javascript" type="text/javascript" src="http://www.westga.edu/~cleach/graphing/math.min.js"></script> -->
 <script type="text/javascript" src="TrackballControls.js"></script>
 <script type="text/javascript" src="parametrictest.js"></script>
@@ -26,7 +31,7 @@ g(x) = <input type="TEXT"  id="gfunctionString" value = "0" size="20" onchange="
 
 <br>
 <br>
-Axis of rotation: <select id=orientation>
+Axis of rotation: <select id="orientation">
   <option value="y">y</option>
   <option value="x">x</option>
 </select>
@@ -39,10 +44,8 @@ Axis of rotation: <select id=orientation>
 a = <input type="TEXT" id="avalue" value="0"   size="10" onchange="drawVerticalLines()">
 b = <input type="TEXT" id="bvalue" value="3"  size="10" onchange="drawVerticalLines()">
 n = <input type="TEXT" id="nvalue" value="25"    size="10">
-<button onclick="drawDisks()">Draw Disks</button>
-<button onclick="drawShells()">Draw Shells</button>
+<button onclick="rotateRegion()">Rotate</button>
 <button onclick="hideShells()">Hide</button>
-<button onclick="sweep(1)">sweep</button>
 <button onclick="highlightRegion()">Shade Area</button>
 <button onclick="unHighlightRegion()">Unshade Area</button><br>
 
