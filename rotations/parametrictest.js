@@ -266,12 +266,14 @@ function drawShells(){
 //---------------------------------------------
   for (var i=a+thickness*.5; i<b; i+=thickness){
     var height = math.abs(f(i)-g(i));
-    var dg = washer(i+thickness,i,height);
+    var shellRadius = Math.abs(i-rotAxisValue);
+    var dg = washer(shellRadius+thickness,shellRadius,height);
     var dm = new THREE.Mesh(dg,diskmat);
     dm.rotateX(Math.PI);
+    dm.position.x +=rotAxisValue;
     dm.position.y +=math.min(f(i),g(i));
     diskset.add(dm);
-    volume += 2*Math.PI * i * height *thickness;
+    volume += 2*Math.PI * shellRadius * height *thickness;
   }
   scene.add(diskset);
   var aa = document.getElementById("volumeOutput");
@@ -405,12 +407,24 @@ function drawAxes(){
 }
 
 function drawRotAxis(){
+  var orientation = document.getElementById("orientation");
   scene.remove(scene.getObjectByName("rotAxisLine"));
   rotAxisValue = math.parse(document.getElementById("rotAxisValue").value).compile().eval();
-  var XBIGIN=-20, XEND=20, XWIDTH=XEND-XBIGIN;
-  var rotAxisGeometry = new THREE.Geometry();
-  rotAxisGeometry.vertices.push(new THREE.Vector3(-XEND,rotAxisValue,0));
-  rotAxisGeometry.vertices.push(new THREE.Vector3( XEND,rotAxisValue,0));
+
+  if (orientation.value=="y"){
+    var XBIGIN=-20, XEND=20, XWIDTH=XEND-XBIGIN;
+    var rotAxisGeometry = new THREE.Geometry();
+    rotAxisGeometry.vertices.push(new THREE.Vector3(-XEND,rotAxisValue,0));
+    rotAxisGeometry.vertices.push(new THREE.Vector3( XEND,rotAxisValue,0));
+  }
+
+  if (orientation.value=="x"){
+    var YBIGIN=-10, YEND=10, YWIDTH=YEND-YBIGIN;
+    var rotAxisGeometry = new THREE.Geometry();
+    rotAxisGeometry.vertices.push(new THREE.Vector3(rotAxisValue,-YEND,0));
+    rotAxisGeometry.vertices.push(new THREE.Vector3(rotAxisValue, YEND,0));
+  }
+
   var rotAxisMaterial = new THREE.LineBasicMaterial( { color: 0x0000000, opacity: 1} );
   var rotAxisLine = new THREE.Line(rotAxisGeometry,rotAxisMaterial);
   rotAxisLine.name ="rotAxisLine";
